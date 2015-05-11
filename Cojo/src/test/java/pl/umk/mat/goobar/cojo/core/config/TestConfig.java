@@ -16,6 +16,9 @@ import pl.umk.mat.goobar.cojo.core.aspect.ContractAspect;
 import pl.umk.mat.goobar.cojo.core.service.MyFaultyListImpl;
 import pl.umk.mat.goobar.cojo.core.service.MyList;
 import pl.umk.mat.goobar.cojo.core.service.MyListImpl;
+import pl.umk.mat.goobar.cojo.core.service.MySet;
+import pl.umk.mat.goobar.cojo.core.service.MySetFaultyImpl;
+import pl.umk.mat.goobar.cojo.core.service.MySetImpl;
 
 import com.rits.cloning.Cloner;
 
@@ -28,7 +31,6 @@ import com.rits.cloning.Cloner;
 @EnableAspectJAutoProxy
 public class TestConfig
 {
-
 	@Bean
 	public Cloner cloner()
 	{
@@ -49,6 +51,13 @@ public class TestConfig
 	}
 
 	@Bean
+	@Qualifier(value = "myFaultySet")
+	public MySet<Object> myFaultySet()
+	{
+		return new MySetFaultyImpl();
+	}
+
+	@Bean
 	@Qualifier(value = "myList")
 	public MyList<Object> myList()
 	{
@@ -56,5 +65,12 @@ public class TestConfig
 			"second", "third"));
 		MyListImpl myListImpl = new MyListImpl(data);
 		return myListImpl;
+	}
+
+	@Bean
+	@Qualifier(value = "mySet")
+	public MySet<Object> mySet()
+	{
+		return new MySetImpl();
 	}
 }

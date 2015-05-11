@@ -9,5 +9,5 @@ package pl.umk.mat.goobar.cojo.core.annotation;
  */
 public enum ContractOrder
 {
-	AFTER, BEFORE, INVARIANT
+	AFTER, BEFORE
 }

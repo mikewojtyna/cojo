@@ -16,8 +16,11 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import pl.umk.mat.goobar.cojo.core.annotation.ContractOrder;
+import pl.umk.mat.goobar.cojo.core.annotation.ContractReference;
+import pl.umk.mat.goobar.cojo.core.annotation.Invariant;
 import pl.umk.mat.goobar.cojo.core.annotation.MethodContract;
 import pl.umk.mat.goobar.cojo.core.annotation.MethodContractReference;
 import pl.umk.mat.goobar.cojo.core.contract.Contract;
@@ -52,8 +55,22 @@ public class ContractAspect
 		MethodContractReference methodContractReference = methodSignature
 			.getMethod().getAnnotation(
 				MethodContractReference.class);
-		Class<? extends Contract<?>> contract = methodContractReference
-			.contract();
+		ContractReference contractReference = AnnotationUtils
+			.findAnnotation(joinPoint.getTarget().getClass(),
+				ContractReference.class);
+		Class<? extends Contract<?>> contract = null;
+		if (methodContractReference != null)
+		{
+			contract = methodContractReference.contract();
+		}
+		else
+		{
+			if (contractReference != null)
+			{
+				contract = contractReference.contract();
+			}
+		}
+
 		try
 		{
 			// create new instance of contract class
@@ -76,21 +93,19 @@ public class ContractAspect
 			List<Method> afterMethodContracts = findMethodsByMethodNameAndContractOrder(
 				contract, methodContractName,
 				ContractOrder.AFTER);
-			List<Method> invariantMethodContracts = findMethodsByMethodNameAndContractOrder(
-				contract, methodContractName,
-				ContractOrder.INVARIANT);
-			// invariants should be called before and after
-			beforeMethodContracts.addAll(invariantMethodContracts);
-			afterMethodContracts.addAll(invariantMethodContracts);
+			List<Method> invariantMethodContracts = findInvariants(contract);
 
-			// execute all before contracts
+			// execute all before contracts and invariants
+			invariantMethodContracts
+				.forEach(method -> invokeMethod(
+					contractInstance, method));
 			List<Object> methodArgs = Arrays.asList(joinPoint
 				.getArgs());
 			beforeMethodContracts.forEach(method -> invokeMethod(
 				contractInstance, method, methodArgs));
 			// run method
 			Object returnValue = joinPoint.proceed();
-			// execute all after contracts
+			// execute all after contracts and invariants
 			ArrayList<Object> returnValueAndMethodArgs = new ArrayList<>(
 				methodArgs);
 			Class<?> returnType = methodSignature.getReturnType();
@@ -101,6 +116,9 @@ public class ContractAspect
 			afterMethodContracts.forEach(method -> invokeMethod(
 				contractInstance, method,
 				returnValueAndMethodArgs));
+			invariantMethodContracts
+				.forEach(method -> invokeMethod(
+					contractInstance, method));
 
 			return returnValue;
 		}
@@ -110,11 +128,35 @@ public class ContractAspect
 		}
 	}
 
+	private List<Method> findAllMethods(Class<?> clazz)
+	{
+		List<Method> result = new ArrayList<>();
+		Method[] methods = clazz.getMethods();
+		result = Arrays.asList(methods);
+		return result;
+	}
+
+	private List<Method> findInvariants(Class<?> clazz)
+	{
+		List<Method> result = new ArrayList<>();
+		List<Method> methods = findAllMethods(clazz);
+		for (Method method : methods)
+		{
+			boolean invariantPresent = method
+				.isAnnotationPresent(Invariant.class);
+			if (invariantPresent)
+			{
+				result.add(method);
+			}
+		}
+		return result;
+	}
+
 	private List<Method> findMethodsByMethodNameAndContractOrder(
 		Class<?> clazz, String methodName, ContractOrder order)
 	{
 		List<Method> result = new ArrayList<>();
-		Method[] methods = clazz.getMethods();
+		List<Method> methods = findAllMethods(clazz);
 		for (Method method : methods)
 		{
 			List<MethodContract> contracts = Arrays.asList(method
