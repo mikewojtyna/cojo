@@ -91,8 +91,16 @@ public class ContractAspect
 			// run method
 			Object returnValue = joinPoint.proceed();
 			// execute all after contracts
+			ArrayList<Object> returnValueAndMethodArgs = new ArrayList<>(
+				methodArgs);
+			Class<?> returnType = methodSignature.getReturnType();
+			if (!Void.TYPE.equals(returnType))
+			{
+				returnValueAndMethodArgs.add(0, returnValue);
+			}
 			afterMethodContracts.forEach(method -> invokeMethod(
-				contractInstance, method, returnValue));
+				contractInstance, method,
+				returnValueAndMethodArgs));
 
 			return returnValue;
 		}

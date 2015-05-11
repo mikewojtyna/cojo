@@ -16,20 +16,15 @@ import pl.umk.mat.goobar.cojo.core.util.ContractAssert;
  */
 public class EchoContract implements Contract<Echo>
 {
-	private String msgArgument;
-
 	@MethodContract(method = "echo", order = ContractOrder.AFTER)
-	public void afterEcho(String returnValue)
+	public void afterEcho(String returnValue, String msg)
 	{
-		ContractAssert.assertTrue(Echo.class,
-			msgArgument.equals(returnValue));
+		ContractAssert.assertTrue(Echo.class, msg.equals(returnValue));
 	}
 
 	@MethodContract(method = "echo", order = ContractOrder.BEFORE)
 	public void beforeEcho(String msg)
 	{
-		msgArgument = msg;
-
 		ContractAssert.assertTrue(Echo.class, msg != null);
 		ContractAssert.assertTrue(Echo.class, !msg.isEmpty());
 	}
