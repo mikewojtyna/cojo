@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package pl.umk.mat.goobar.cojo.core.aspect;
 
@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -17,7 +16,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
-
+import com.rits.cloning.Cloner;
 import pl.umk.mat.goobar.cojo.core.annotation.ContractOrder;
 import pl.umk.mat.goobar.cojo.core.annotation.ContractReference;
 import pl.umk.mat.goobar.cojo.core.annotation.Invariant;
@@ -26,8 +25,6 @@ import pl.umk.mat.goobar.cojo.core.annotation.MethodContractReference;
 import pl.umk.mat.goobar.cojo.core.contract.Contract;
 import pl.umk.mat.goobar.cojo.core.contract.ContractViolatedException;
 
-import com.rits.cloning.Cloner;
-
 /**
  * @author goobar
  *
@@ -35,14 +32,10 @@ import com.rits.cloning.Cloner;
 @Aspect
 public class ContractAspect
 {
-	private Cloner cloner;
+	private final Cloner cloner;
 
-	/**
-	 * @param cloner
-	 *                the cloner to set
-	 */
 	@Autowired
-	public void setCloner(Cloner cloner)
+	public ContractAspect(Cloner cloner)
 	{
 		this.cloner = cloner;
 	}
@@ -53,8 +46,8 @@ public class ContractAspect
 		MethodSignature methodSignature = (MethodSignature) joinPoint
 			.getSignature();
 		MethodContractReference methodContractReference = methodSignature
-			.getMethod().getAnnotation(
-				MethodContractReference.class);
+			.getMethod()
+			.getAnnotation(MethodContractReference.class);
 		ContractReference contractReference = AnnotationUtils
 			.findAnnotation(joinPoint.getTarget().getClass(),
 				ContractReference.class);
@@ -93,14 +86,14 @@ public class ContractAspect
 			List<Method> afterMethodContracts = findMethodsByMethodNameAndContractOrder(
 				contract, methodContractName,
 				ContractOrder.AFTER);
-			List<Method> invariantMethodContracts = findInvariants(contract);
+			List<Method> invariantMethodContracts = findInvariants(
+				contract);
 
 			// execute all before contracts and invariants
-			invariantMethodContracts
-				.forEach(method -> invokeMethod(
-					contractInstance, method));
-			List<Object> methodArgs = Arrays.asList(joinPoint
-				.getArgs());
+			invariantMethodContracts.forEach(method -> invokeMethod(
+				contractInstance, method));
+			List<Object> methodArgs = Arrays
+				.asList(joinPoint.getArgs());
 			beforeMethodContracts.forEach(method -> invokeMethod(
 				contractInstance, method, methodArgs));
 			// run method
@@ -113,12 +106,11 @@ public class ContractAspect
 			{
 				returnValueAndMethodArgs.add(0, returnValue);
 			}
-			afterMethodContracts.forEach(method -> invokeMethod(
-				contractInstance, method,
-				returnValueAndMethodArgs));
-			invariantMethodContracts
-				.forEach(method -> invokeMethod(
-					contractInstance, method));
+			afterMethodContracts.forEach(
+				method -> invokeMethod(contractInstance, method,
+					returnValueAndMethodArgs));
+			invariantMethodContracts.forEach(method -> invokeMethod(
+				contractInstance, method));
 
 			return returnValue;
 		}

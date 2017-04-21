@@ -1,17 +1,16 @@
 /**
- * 
+ *
  */
 package pl.umk.mat.goobar.cojo.core.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-
+import com.rits.cloning.Cloner;
 import pl.umk.mat.goobar.cojo.core.aspect.ContractAspect;
 import pl.umk.mat.goobar.cojo.core.service.MyFaultyListImpl;
 import pl.umk.mat.goobar.cojo.core.service.MyList;
@@ -19,8 +18,6 @@ import pl.umk.mat.goobar.cojo.core.service.MyListImpl;
 import pl.umk.mat.goobar.cojo.core.service.MySet;
 import pl.umk.mat.goobar.cojo.core.service.MySetFaultyImpl;
 import pl.umk.mat.goobar.cojo.core.service.MySetImpl;
-
-import com.rits.cloning.Cloner;
 
 /**
  * @author goobar
@@ -38,9 +35,9 @@ public class TestConfig
 	}
 
 	@Bean
-	public ContractAspect greeterAspect()
+	public ContractAspect greeterAspect(Cloner cloner)
 	{
-		return new ContractAspect();
+		return new ContractAspect(cloner);
 	}
 
 	@Bean
@@ -61,8 +58,8 @@ public class TestConfig
 	@Qualifier(value = "myList")
 	public MyList<Object> myList()
 	{
-		ArrayList<Object> data = new ArrayList<>(Arrays.asList("first",
-			"second", "third"));
+		ArrayList<Object> data = new ArrayList<>(
+			Arrays.asList("first", "second", "third"));
 		MyListImpl myListImpl = new MyListImpl(data);
 		return myListImpl;
 	}

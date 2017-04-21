@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package pl.umk.mat.goobar.cojo.core;
 
@@ -13,7 +13,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import pl.umk.mat.goobar.cojo.core.config.TestConfig;
 import pl.umk.mat.goobar.cojo.core.contract.ContractViolatedException;
 import pl.umk.mat.goobar.cojo.core.service.MyList;
@@ -25,32 +24,16 @@ import pl.umk.mat.goobar.cojo.core.service.MyList;
 @RunWith(value = SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @ContextConfiguration(classes = TestConfig.class)
+@SuppressWarnings("javadoc")
 public class MyListMethodContractTest
 {
-	private MyList<Object> myFaultyList;
-	private MyList<Object> myList;
-
-	/**
-	 * @param myFaultyList
-	 *                the myFaultyList to set
-	 */
 	@Autowired
 	@Qualifier(value = "myFaultyList")
-	public void setMyFaultyList(MyList<Object> myFaultyList)
-	{
-		this.myFaultyList = myFaultyList;
-	}
+	private MyList<Object> myFaultyList;
 
-	/**
-	 * @param myList
-	 *                the myList to set
-	 */
 	@Autowired
 	@Qualifier(value = "myList")
-	public void setMyList(MyList<Object> myList)
-	{
-		this.myList = myList;
-	}
+	private MyList<Object> myList;
 
 	/**
 	 * @throws java.lang.Exception
@@ -61,7 +44,7 @@ public class MyListMethodContractTest
 	}
 
 	@Test
-	public void shoulAddContractExecuteSuccesfullyWhenUsingValidMyListService()
+	public void shoul_AddContractExecuteSuccesfully_When_UsingValidMyListService()
 	{
 		// fixture
 		Object element = new Object();
@@ -71,7 +54,7 @@ public class MyListMethodContractTest
 	}
 
 	@Test(expected = ContractViolatedException.class)
-	public void shouldViolateAddContractWhenUsingFaultyMyListService()
+	public void should_ViolateAddContract_When_UsingFaultyMyListService()
 	{
 		// fixture
 		Object element = new Object();

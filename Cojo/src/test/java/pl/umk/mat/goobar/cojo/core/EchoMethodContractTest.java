@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package pl.umk.mat.goobar.cojo.core;
 
@@ -13,7 +13,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import pl.umk.mat.goobar.cojo.core.config.TestConfig;
 import pl.umk.mat.goobar.cojo.core.contract.ContractViolatedException;
 import pl.umk.mat.goobar.cojo.core.service.Echo;
@@ -25,32 +24,16 @@ import pl.umk.mat.goobar.cojo.core.service.Echo;
 @ContextConfiguration(classes = TestConfig.class)
 @RunWith(value = SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@SuppressWarnings("javadoc")
 public class EchoMethodContractTest
 {
-	private Echo echo;
-	private Echo faultyEcho;
-
-	/**
-	 * @param echo
-	 *                the echo to set
-	 */
 	@Autowired
 	@Qualifier(value = "echo")
-	public void setEcho(Echo echo)
-	{
-		this.echo = echo;
-	}
+	private Echo echo;
 
-	/**
-	 * @param faultyEcho
-	 *                the faultyEcho to set
-	 */
 	@Autowired
 	@Qualifier(value = "faultyEcho")
-	public void setFaultyEcho(Echo faultyEcho)
-	{
-		this.faultyEcho = faultyEcho;
-	}
+	private Echo faultyEcho;
 
 	/**
 	 * @throws java.lang.Exception
@@ -61,7 +44,7 @@ public class EchoMethodContractTest
 	}
 
 	@Test
-	public void shouldContractExecuteSuccesfullyWhenUsingValidEchoService()
+	public void should_ContractExecuteSuccesfully_When_UsingValidEchoService()
 	{
 		// fixture
 		String msg = "message";
@@ -71,7 +54,7 @@ public class EchoMethodContractTest
 	}
 
 	@Test(expected = ContractViolatedException.class)
-	public void shouldViolateContractForEmptyMessageWhenUsingValidEchoService()
+	public void should_ViolateContractForEmptyMessage_When_UsingValidEchoService()
 	{
 		// fixture
 		String msg = "";
@@ -81,9 +64,9 @@ public class EchoMethodContractTest
 	}
 
 	@Test(expected = ContractViolatedException.class)
-	public void shouldViolateContractForNullMessageWhenUsingValidEchoService()
+	public void should_ViolateContractForNullMessage_When_UsingValidEchoService()
 	{
-		// fixtture
+		// fixture
 		String msg = null;
 
 		// when
@@ -91,7 +74,7 @@ public class EchoMethodContractTest
 	}
 
 	@Test(expected = ContractViolatedException.class)
-	public void shouldViolateContractForValidMessageWhenUsingFaultyEchoService()
+	public void should_ViolateContractForValidMessage_When_UsingFaultyEchoService()
 	{
 		// fixture
 		String msg = "message";

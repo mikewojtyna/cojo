@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package pl.umk.mat.goobar.cojo.core;
 
@@ -13,7 +13,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import pl.umk.mat.goobar.cojo.core.config.TestConfig;
 import pl.umk.mat.goobar.cojo.core.contract.ContractViolatedException;
 import pl.umk.mat.goobar.cojo.core.service.MySet;
@@ -25,32 +24,16 @@ import pl.umk.mat.goobar.cojo.core.service.MySet;
 @RunWith(value = SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@SuppressWarnings("javadoc")
 public class MySetInvariantContractTest
 {
-	private MySet<Object> myFaultySet;
-	private MySet<Object> mySet;
-
-	/**
-	 * @param myFaultySet
-	 *                the myFaultySet to set
-	 */
 	@Autowired
 	@Qualifier(value = "myFaultySet")
-	public void setMyFaultySet(MySet<Object> myFaultySet)
-	{
-		this.myFaultySet = myFaultySet;
-	}
+	private MySet<Object> myFaultySet;
 
-	/**
-	 * @param mySet
-	 *                the mySet to set
-	 */
 	@Autowired
 	@Qualifier(value = "mySet")
-	public void setMySet(MySet<Object> mySet)
-	{
-		this.mySet = mySet;
-	}
+	private MySet<Object> mySet;
 
 	/**
 	 * @throws java.lang.Exception
@@ -61,7 +44,7 @@ public class MySetInvariantContractTest
 	}
 
 	@Test
-	public void shouldInvariantContractExecuteSuccesfullyWhenStoringNotUniqueElementsUsingValidMySet()
+	public void should_InvariantContractExecuteSuccesfully_When_StoringNotUniqueElementsUsingValidMySet()
 	{
 		// fixture
 		Object firstElement = "aa";
@@ -75,7 +58,7 @@ public class MySetInvariantContractTest
 	}
 
 	@Test(expected = ContractViolatedException.class)
-	public void shouldViolateInvariantWhenStoringNotUniqueElementsUsingFaultyMySet()
+	public void should_ViolateInvariant_When_StoringNotUniqueElementsUsingFaultyMySet()
 	{
 		// fixture
 		Object firstElement = "aa";
